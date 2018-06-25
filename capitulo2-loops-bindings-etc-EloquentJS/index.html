@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Eloquent JavaScript - cap2 </title>
+    <style>
+    
+        .selected{
+
+            background-color: #2b2323;
+            color: white;
+            font-size: 120%;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+
+        .deselected{
+
+            background-color: white;
+            color: black;
+            font-size: 100%;
+            transition: 0.9s;
+
+        }
+ 
+        .executed {
+            background-color:rgba(30, 255, 0, 0.863);
+            color:black;
+            font-size: 120%;
+            border-radius: 5px;
+            transition: 0.5s;
+        }
+
+        .dexecuted {
+            background-color:white;
+            color:black;
+            font-size: 100%;
+            transition: 0.4s;
+        }
+    
+    </style>
+</head>
+<body>
+
+    <div style="display: flex;">
+
+            <h1 style="margin-left: 10%">CHAVES</h1>
+            <h1 style="margin-left: 10%">VALOR</h1>
+
+    </div>
+    
+    <div style="display: flex;">
+
+                <div style="width: 25%;" >
+        
+                    <pre id='key-values-pairs'>
+                        <ul class='key-values-pairs-list'onclick="handleClicked(event);"></ul>    
+                    </pre>
+            
+                </div>
+                
+                <div style="width: 40%;" >
+                    
+                    <pre >
+                        <ul class='key-values-pairs-list' onclick='prepareEditing(event)'></ul>    
+                    </pre>
+                
+                </div>
+
+    </div>
+    
+    
+    <script src="loops.js"></script>
+    <script src="switcher.js"></script>
+
+<!---->
+    <script>
+
+        console.clear();
+
+        let timeKeysValues = {};
+        let keysCount = 100;
+        let key,value;
+        timeKeysValues[true] = function(){console.log('true key')};
+        timeKeysValues[false] = function(){console.log('false key')};
+        while(keysCount > 0){
+
+            key = new Date().getTime() + keysCount*keysCount;
+            value = key => `function called by ${key}`;
+
+            timeKeysValues[key] = value;
+
+            keysCount--;
+
+        };
+
+        switcher.clear();
+
+        for (key in timeKeysValues) switcher.add(key, timeKeysValues[key],key);
+
+        let keys   = [];
+        let values = [];
+      
+        for(key in timeKeysValues){
+            keys.push(key);
+            values.push(timeKeysValues[key]+","+key);
+        }
+   
+        let strKeys = keys.map(e => `<li style='cursor:pointer' title='executa Switch(${e})'>${e}</li><hr>`).join(' ');
+        document.getElementsByClassName('key-values-pairs-list')[0].innerHTML = strKeys;
+        let strValues = values.map(e => {
+            let key = e.split(',')[1];
+            let value = e.split(',')[0];
+            return `<li id='${key}' style='cursor:pointer' title='clique para editar'>${value}</li><hr>`})
+            .join(' ');
+        document.getElementsByClassName('key-values-pairs-list')[1].innerHTML = strValues;
+        
+        let htmlValues = document.getElementsByClassName('key-values-pairs-list')[1];
+        let lis = [];
+        for(let i = 0; i < htmlValues.children.length; i++){
+            
+            if(htmlValues.children[i].tagName=='LI')
+                lis.push(htmlValues.children[i]);
+            
+        };
+        
+        let handleClicked = function(event){
+
+            if( isLi(event.target) ){
+                var key = event.target.textContent;
+                handleKey(event.target);
+            }
+            
+        }
+
+        let handleKey = function(key){
+                  
+            let li;
+            for( let i = 0; i < lis.length; i++){
+                if( lis[i].id == key.textContent ){
+                    li = lis[i];
+                    break;
+                }
+            }
+    
+            if(key.classList.contains('selected')){
+                
+                key.classList.remove('selected');
+                key.classList.add('deselected');
+                li.classList.remove('executed');
+                li.classList.add('dexecuted');
+
+                li.textContent = switcher.get(key.textContent);
+
+            }else{
+                
+                key.classList.add('selected');
+                key.classList.remove('deselected');
+                li.classList.add('executed');
+                li.classList.remove('dexecuted');
+                let r = Switch(key.textContent);
+                li.textContent = r?r:switcher.get(key.textContent)+',EXECUTADA'
+
+            }
+        }
+
+        let callBack;
+        let prepareEditing = function(e){
+            
+            if( isLi( e.target ) )
+            {
+                callBack = e.target.textContent;
+
+                e.target.innerHTML = `<input id='${e.target.id},input' type='text' value='${callBack}' style='cursor:pointer;width:100%;margin-bottom:0px;padding:0;background-color:#2b2323;color:white;font-size:120%;border-radius:8px; transition:2s;' title='clique para editar' oninput="handleEditing(event)" onkeyup="handleKeyUp(event)"></input>`;
+                
+                e.target.children[0].focus();
+
+                
+            }else if(e.target.tagName == 'INPUT') {
+                
+                callBack = e.target.value;
+                e.target.parentElement.innerHTML = callBack;
+                
+            }
+
+        }
+
+        let handleEditing = function(e){
+            //console.log(e);
+        }
+
+        let handleKeyUp = function(e){
+            
+            switcher.
+                    add('Escape', arg => handleEscape(arg), e).
+                    add('Enter', arg => handleEnter(arg), e).
+                    Switch(e.code);
+            
+        }
+
+        let handleEscape = function(e){
+            e.srcElement.parentElement.innerHTML = callBack;
+        }
+
+        let handleEnter = function(e){
+            if(e.srcElement.value.trim() == callBack.trim()) {e.srcElement.parentElement.innerHTML=callBack;return ;};
+            e.srcElement.parentElement.innerHTML = e.srcElement.value;
+            let pieceOfCode = e.srcElement.value;
+            switcher.add(e.srcElement.id.split(',')[0],() => eval(pieceOfCode));
+            console.log(switcher.get(e.srcElement.id.split(',')[0]));
+            Switch(e.srcElement.id.split(',')[0]);
+        }
+
+        let getFunction = function(arg){
+            return arg;
+        }
+
+        let isLi = function(element){
+            return element.tagName === 'LI';
+        }
+     
+    
+    </script>
+
+</body>
+</html>
