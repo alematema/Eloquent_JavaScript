@@ -1,11 +1,25 @@
 console.log(countBs('ABBBBbCDEISDFffCCDFF'));
-
+/*
 function countChar(str, char){
 
     let charCount = 0;
 
     for( let i = 0; i < str.length; i++ ){
         if( str[i] == char ) charCount++;
+    }
+
+    return charCount;
+
+}
+*/
+
+
+function countChar(str, char){
+
+    let charCount = 0;
+
+    for( let strChar of str ){
+        if( strChar == char ) charCount++;
     }
 
     return charCount;
