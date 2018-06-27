@@ -7,14 +7,14 @@
  * se a = {0:0, 2:2, 1:1} e b = {2:2, 0:0, 1:1},
  * 
  * eles serão avaliados como iguais, porque a implementação compara por propriedade e
- * pelo valor que ela segura, independente da ordem relativa em que a propriedade aparece am a e em b.
+ * pelo valor que ela segura, independente da ordem relativa em que a propriedade aparece em a E em b.
  * 
  * @param a : um dos objetos a se comparar
  * @param b : outro objeto a se comparar 
  * 
  * @author alexandre
  */
-function deepComparison( a , b ){
+function deepEquals( a , b ){
 
     //no momento, não sei comparar funções, por isso retorno undefined, caso algum parametro seja do tipo Function
     if(a instanceof Function || b instanceof Function) return undefined;
@@ -32,7 +32,7 @@ function deepComparison( a , b ){
 
             if( ! Object.keys(b).includes(key) ) return false;
 
-            if( ! deepComparison( a[key], b[key]) ) return false;
+            if( ! deepEquals( a[key], b[key] ) ) return false;
 
         }
 
@@ -46,8 +46,8 @@ function deepComparison( a , b ){
 
 }
 
-let arg1 = {a:1,c:{0:0,1:1,2:2},b:1};
-let arg2 = {b:1,a:1,c:{0:0,1:1,2:2}};
+let arg1 = {a:1,c:{0:0,1:1,2:2},b:1,d:'jantar',e:'em casa'};
+let arg2 = {e:'em casa',d:'jantar',b:1,a:1,c:{0:0,1:1,2:2}};
 
 //let arg1 = [0,[1,2,3],1];
 //let arg2 = [0,[1,2,3],1];
@@ -55,7 +55,10 @@ let arg2 = {b:1,a:1,c:{0:0,1:1,2:2}};
 //let arg1 = {0:0,1:1,2:2}
 //let arg2 = [0,1,2];
 
+//let arg1 = [0,[1,2,3],5];
+//let arg2 = [0,[1,2,3],1];
+
 //let arg1 = function(a){console.log(a)};
 //let arg2 = function(a){console.log(a)};
 
-console.log(deepComparison(arg1, arg2));
+console.log(deepEquals(arg1, arg2));
