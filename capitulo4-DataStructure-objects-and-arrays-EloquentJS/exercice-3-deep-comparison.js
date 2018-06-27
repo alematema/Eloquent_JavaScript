@@ -19,6 +19,8 @@ function deepComparison( a , b ){
     //no momento, não sei comparar funções, por isso retorno undefined, caso algum parametro seja do tipo Function
     if(a instanceof Function || b instanceof Function) return undefined;
 
+    if( a == null || b == null ) return false;
+
     if ( a instanceof Object && b instanceof Object){
 
         if( (a instanceof Array) && !(b instanceof Array) ) return false;
