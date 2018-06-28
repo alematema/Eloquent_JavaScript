@@ -1,5 +1,4 @@
 // Generated from the Unicode 10 database and https://en.wikipedia.org/wiki/Script_(Unicode)
-
 SCRIPTS = [
   {
     name: "Adlam",
@@ -1115,6 +1114,8 @@ SCRIPTS = [
   }
 ];
 
+let hasCode = function( code ) {return this.ranges.some(( [from, to] ) => code >= from && code < to )};
+for ( script of SCRIPTS ) script.hasCode = hasCode;
 // This makes sure the data is exported in node.js —
 // `require('./path/to/scripts.js')` will get you the array.
 if (typeof module != "undefined" && module.exports && (typeof window == "undefined" || window.exports != exports))
